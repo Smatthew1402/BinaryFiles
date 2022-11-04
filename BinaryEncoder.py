@@ -38,10 +38,9 @@ class BinaryUtility:
         bytearr = bytearray(self.name, "utf-8")
         bytelist = []
         for byte in bytearr:
-            bytelist.append(format(byte, "08b"))
+            bytelist.append(format(byte, "08b")+" ")
         for str in bytelist:
             biname += str
-        biname += "10000000"
         return biname
 
     def buildsemester(self, semestergrades:list)->str:
@@ -54,7 +53,7 @@ class BinaryUtility:
         spacer = "1111"
         outstring = ""
         for number in semestergrades:
-            outstring += format(number, "08b")+"11111111"
+            outstring += format(number, "08b") +" "
         return outstring
 
 
@@ -72,13 +71,15 @@ class BinaryUtility:
     def writeBinaryData(self):
         with open(self.filename, 'wb') as writer:
             for line in self.binarydata:
-                writer.write(bytearray(line, "utf-8"))
+                linebyte = bytes(line, "utf-8")
+                writer.write(linebyte)
+                writer.write(bytes("\n", "utf-8"))
 
 
 class BinaryRunner:
     def __init__(self):
         BU = BinaryUtility(datain=self.run())
-        BU.printbinarydata()
+        #BU.printbinarydata()
         BU.writeBinaryData()
 
 
