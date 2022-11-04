@@ -24,7 +24,7 @@ class BinaryUtility:
             self.studentdata = {}
             pass
 
-        def read(self):
+        def run(self):
             self.studentdata["Name"]=self.translateName()
 
         
@@ -46,7 +46,7 @@ class BinaryUtility:
                 print(line)
                 print("\n")
         
-        def translateName(self):
+        def translateName(self)->str:
             letters = ""
             nameline = list(self.lines[0].decode())
             templist =[]
@@ -58,6 +58,7 @@ class BinaryUtility:
                     letters += (chr(self.binarytoint(templist)))
                     templist.clear()
             letters += (chr(self.binarytoint(templist)))
+            return letters
         
         def translateGrades():
             pass
@@ -161,7 +162,8 @@ class BinaryRunner:
         BW.writeBinaryData()
         BR = BinaryUtility.Reader()
         BR.readfile()
-        BR.translateName()
+        BR.run()
+        print(BR.studentdata)
 
 
 
