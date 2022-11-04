@@ -29,9 +29,13 @@ class BinaryUtility:
         def run(self):
             """Runs through the base steps of the reader
             """
-            self.readfile()
-            self.studentdata["Name"]=self.translateName()
-            self.translateGrades()
+            self._readfile()
+            self.studentdata["Name"]=self._translateName()
+            self._translateGrades()
+            self._printlines()
+            print("\n")
+            print(self.getAverages())
+            print("\n")
 
         
         def binarytoint(self, binary:list)->int:
@@ -50,7 +54,7 @@ class BinaryUtility:
                 count -=1
             return intout
 
-        def readfile(self):
+        def _readfile(self):
             """Opens the file and loads each line into self.lines
             """
             with open(self.filename, "rb") as reader:
@@ -64,7 +68,7 @@ class BinaryUtility:
                 print(line)
                 print("\n")
         
-        def translateName(self)->str:
+        def _translateName(self)->str:
             """Reads the first line of the file, and returns it as a string
                     Assumes that the first line is the name line, and it is formatted according to my format
                     creates a string by converting each 8 bit section into number, then that number into an ASCII char
@@ -86,14 +90,13 @@ class BinaryUtility:
             letters += (chr(self.binarytoint(templist)))
             return letters
         
-        def translateGrades(self):
+        def _translateGrades(self):
             """Translates the lines of the file starting at the seccond line into grades.
                     Each line is one semester, that semester has a list of grades. Assumes each 8 bits is one grade
             """
             grades = []
             templist= []
             for i in range(1,len(self.lines)):
-                print("\n"+self.lines[i].decode()+"\n")
                 line = self.lines[i].decode()
                 for j in range(0,len(line)):
                     ch = line[j]
@@ -104,9 +107,29 @@ class BinaryUtility:
                         grades.append(self.binarytoint(templist))
                         templist.clear()
                 grades.append(self.binarytoint(templist))
+                templist.clear()
                 dictname = "Semester"+str(i)
                 self.studentdata[dictname]= copy.deepcopy(grades)
-                grades.clear()     
+                grades.clear()
+
+        def getAverages(self)->dict:
+            out = {"Name":self.studentdata["Name"]}
+            for key in self.studentdata.keys():
+                if key == "Name":
+                    pass
+                else:
+                    avekey = key+"Average"
+                    out[avekey] = self._calcAverage(self.studentdata[key])
+            return out
+
+        def _calcAverage(self, nums:list)->int:
+            sum = 0
+            count = 0
+            for item in nums:
+                sum +=item
+                count+=1
+            out = int(sum/count)
+            return out
 
 
     class Writer:
