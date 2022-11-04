@@ -25,19 +25,13 @@ class BinaryUtility:
             self.studentdata = {}
             self.run()
             
-
         def run(self):
             """Runs through the base steps of the reader
             """
             self._readfile()
             self.studentdata["Name"]=self._translateName()
             self._translateGrades()
-            self._printlines()
-            print("\n")
-            print(self.getAverages())
-            print("\n")
-
-        
+            
         def binarytoint(self, binary:list)->int:
             """Converts a list of 8 1s or 0s to binary
 
@@ -164,7 +158,6 @@ class BinaryUtility:
             self.binarydata.append(self.buildname())
             self.loadsemesters()
 
-        
         def buildname(self)->str:
             """builds the name line for the file
 
@@ -192,7 +185,6 @@ class BinaryUtility:
                 outstring += format(number, "08b") +" "
             return outstring
 
-
         def printbinarydata(self)->None:
             """Prints the data in binaryday two ways:
                 Line-By-Line printing each line on its own line
@@ -203,14 +195,12 @@ class BinaryUtility:
             print("\nbinarydata raw\n")
             print(self.binarydata)
             
-
         def loadsemesters(self):
             """Iterates through data's non-"Name" keys, sending the data associated with them into buildsemester
             """
             for key in self.data.keys():
                 if key !="Name":
                     self.binarydata.append(self.buildsemester(self.data[key]))
-
 
         def writeBinaryData(self):
             """Writes the data from binarydata to filename
@@ -220,16 +210,37 @@ class BinaryUtility:
                     linebyte = bytes(line, "utf-8")
                     writer.write(linebyte)
                     writer.write(bytes("\n", "utf-8"))
-                
 
+        def getAveragesWr(self)->dict:
+            out = {"Name":self.data["Name"]}
+            for key in self.data.keys():
+                if key == "Name":
+                    pass
+                else:
+                    avekey = key+"Average"
+                    out[avekey] = self._calcAverage(self.data[key])
+            return out
+
+        def _calcAverage(self, nums:list)->int:
+            sum = 0
+            count = 0
+            for item in nums:
+                sum +=item
+                count+=1
+            out = int(sum/count)
+            return out
+                
 
 class BinaryRunner:
     def __init__(self):
         BW = BinaryUtility.Writer(datain=self.run())
-        #BW.printbinarydata()
+        print("Writer Averages")
+        print(BW.getAveragesWr())
         BW.writeBinaryData()
         BR = BinaryUtility.Reader()
-        print(BR.studentdata)
+        print("Reader Averages")
+        print(BR.getAverages())
+        
 
 
 
