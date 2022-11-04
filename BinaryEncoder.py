@@ -8,9 +8,11 @@
 """
 class BinaryUtility:
     def __init__(self, filenamein:str="BinaryUtilOut.dat"):
-        self.writer = self.Writer(self.filenamein)
-        self.reader = self.Reader(self.filenamein)
+        #self.writer = self.Writer(filenamein)
+        #self.reader = self.Reader(filenamein)
+        pass
 
+   
 
     class Reader:
         """Reads data from the file
@@ -22,21 +24,51 @@ class BinaryUtility:
             self.studentdata = {}
             pass
 
+        def read(self):
+            self.studentdata["Name"]=self.translateName()
+
+        
+        def binarytoint(self, binary:list):
+            count =7
+            intout = 0
+            for int in range(0,8):
+                intout += (pow(2,count)*binary[int])
+                count -=1
+            return intout
+
         def readfile(self):
             with open(self.filename, "rb") as reader:
                 for line in reader:
-                    self.lines.append(line)
+                    self.lines.append(line[0:-2])
             
         def printlines(self):
             for line in self.lines:
                 print(line)
+                print("\n")
+        
+        def translateName(self):
+            letters = ""
+            nameline = list(self.lines[0].decode())
+            templist =[]
+            for ch in nameline:
+                if ch != " ":
+                    num = int(ch)
+                    templist.append(num)
+                if ch == " ":
+                    letters += (chr(self.binarytoint(templist)))
+                    templist.clear()
+            letters += (chr(self.binarytoint(templist)))
+        
+        def translateGrades():
+            pass
+
 
     class Writer:
         """Writes data to the file 
         """
        
-        def __init__(self, filename:str = "BinaryUtilOut.dat", datain:dict = None, studentname:str = None):
-            self.filename = filename
+        def __init__(self, filenamein:str = "BinaryUtilOut.dat", datain:dict = None, studentname:str = None):
+            self.filename = filenamein
             if datain is not None:
                 self.data = datain
                 if studentname is None:
@@ -46,6 +78,7 @@ class BinaryUtility:
             else:
                 self.data = {}
                 self.data["Name"]:studentname
+                self.name = studentname
             self.binarydata = []
             self.builddata()
             
@@ -128,7 +161,7 @@ class BinaryRunner:
         BW.writeBinaryData()
         BR = BinaryUtility.Reader()
         BR.readfile()
-        BR.printlines()
+        BR.translateName()
 
 
 
@@ -155,3 +188,4 @@ class BinaryRunner:
 
 if __name__ == "__main__":
     BR = BinaryRunner()
+    
