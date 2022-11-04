@@ -1,3 +1,4 @@
+import copy
 """BinaryUtility
     Creates a .dat file containing up to 8 semesters for one student
     Each semester contains up to 5 grades
@@ -26,6 +27,7 @@ class BinaryUtility:
 
         def run(self):
             self.studentdata["Name"]=self.translateName()
+            self.translateGrades()
 
         
         def binarytoint(self, binary:list):
@@ -60,8 +62,24 @@ class BinaryUtility:
             letters += (chr(self.binarytoint(templist)))
             return letters
         
-        def translateGrades():
-            pass
+        def translateGrades(self):
+            grades = []
+            templist= []
+            for i in range(1,len(self.lines)):
+                print("\n"+self.lines[i].decode()+"\n")
+                line = self.lines[i].decode()
+                for j in range(0,len(line)):
+                    ch = line[j]
+                    if ch != " ":
+                        num = int(ch)
+                        templist.append(num)
+                    else:
+                        grades.append(self.binarytoint(templist))
+                        templist.clear()
+                grades.append(self.binarytoint(templist))
+                dictname = "Semester"+str(i)
+                self.studentdata[dictname]= copy.deepcopy(grades)
+                grades.clear()     
 
 
     class Writer:
