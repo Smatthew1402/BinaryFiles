@@ -7,92 +7,129 @@
     each subsequent line is a semester, a space dentoes a new grade
 """
 class BinaryUtility:
+    def __init__(self, filenamein:str="BinaryUtilOut.dat"):
+        self.writer = self.Writer(self.filenamein)
+        self.reader = self.Reader(self.filenamein)
 
-    def __init__(self, filename:str = "BinaryUtilOut.dat", datain:dict = None, studentname:str = None):
-        self.filename = filename
-        if datain is not None:
-            self.data = datain
-            if studentname is None:
-                self.name = self.data["Name"]
+
+    class Reader:
+        """Reads data from the file
+        """
+        
+        def __init__(self, filenamein:str = "BinaryUtilOut.dat"):
+            self.filename = filenamein
+            self.lines = []
+            self.studentdata = {}
+            pass
+
+        def readfile(self):
+            with open(self.filename, "rb") as reader:
+                for line in reader:
+                    self.lines.append(line)
+            
+        def printlines(self):
+            for line in self.lines:
+                print(line)
+
+    class Writer:
+        """Writes data to the file 
+        """
+       
+        def __init__(self, filename:str = "BinaryUtilOut.dat", datain:dict = None, studentname:str = None):
+            self.filename = filename
+            if datain is not None:
+                self.data = datain
+                if studentname is None:
+                    self.name = self.data["Name"]
+                else:
+                    self.name = studentname
             else:
-                self.name = studentname
-        else:
-            self.data = {}
-            self.data["Name"]:studentname
-        self.binarydata = []
-        self.builddata()
+                self.data = {}
+                self.data["Name"]:studentname
+            self.binarydata = []
+            self.builddata()
+            
+        def addsemester(self, semestername:str, grades:list)->None:
+            self.data[semestername]=grades
+
+        def setname(self, studentname:str):
+            self.data["Name"]=studentname
+            self.name = studentname
+
+        def builddata(self):
+            """Filled the binarydata list
+            """
+            self.binarydata.append(self.buildname())
+            self.loadsemesters()
+
         
+        def buildname(self)->str:
+            """builds the name line for the file
 
-    def builddata(self):
-        """Filled the binarydata list
-        """
-        self.binarydata.append(self.buildname())
-        self.loadsemesters()
+            Returns:
+                str: the name of the file converted to binary
+            """
+            biname = ""
+            bytearr = bytearray(self.name, "utf-8")
+            bytelist = []
+            for byte in bytearr:
+                bytelist.append(format(byte, "08b")+" ")
+            for str in bytelist:
+                biname += str
+            return biname
 
-    
-    def buildname(self)->str:
-        """builds the name line for the file
+        def buildsemester(self, semestergrades:list)->str:
+            """Builds a semester of data
+                " " between each grade that semester
 
-        Returns:
-            str: the name of the file converted to binary
-        """
-        biname = ""
-        bytearr = bytearray(self.name, "utf-8")
-        bytelist = []
-        for byte in bytearr:
-            bytelist.append(format(byte, "08b")+" ")
-        for str in bytelist:
-            biname += str
-        return biname
-
-    def buildsemester(self, semestergrades:list)->str:
-        """Builds a semester of data
-            " " between each grade that semester
-
-        Returns:
-            str: The binary data for one semester in string form
-        """
-        outstring = ""
-        for number in semestergrades:
-            outstring += format(number, "08b") +" "
-        return outstring
+            Returns:
+                str: The binary data for one semester in string form
+            """
+            outstring = ""
+            for number in semestergrades:
+                outstring += format(number, "08b") +" "
+            return outstring
 
 
-    def printbinarydata(self)->None:
-        """Prints the data in binaryday two ways:
-            Line-By-Line printing each line on its own line
-            And wholesale, printing the default list.__repr__
-        """
-        for line in self.binarydata:
-            print(line)
-        print("\nbinarydata raw\n")
-        print(self.binarydata)
-        
-
-    def loadsemesters(self):
-        """Iterates through data's non-"Name" keys, sending the data associated with them into buildsemester
-        """
-        for key in self.data.keys():
-            if key !="Name":
-                self.binarydata.append(self.buildsemester(self.data[key]))
-
-
-    def writeBinaryData(self):
-        """Writes the data from binarydata to filename
-        """
-        with open(self.filename, 'wb') as writer:
+        def printbinarydata(self)->None:
+            """Prints the data in binaryday two ways:
+                Line-By-Line printing each line on its own line
+                And wholesale, printing the default list.__repr__
+            """
             for line in self.binarydata:
-                linebyte = bytes(line, "utf-8")
-                writer.write(linebyte)
-                writer.write(bytes("\n", "utf-8"))
+                print(line)
+            print("\nbinarydata raw\n")
+            print(self.binarydata)
+            
+
+        def loadsemesters(self):
+            """Iterates through data's non-"Name" keys, sending the data associated with them into buildsemester
+            """
+            for key in self.data.keys():
+                if key !="Name":
+                    self.binarydata.append(self.buildsemester(self.data[key]))
+
+
+        def writeBinaryData(self):
+            """Writes the data from binarydata to filename
+            """
+            with open(self.filename, 'wb') as writer:
+                for line in self.binarydata:
+                    linebyte = bytes(line, "utf-8")
+                    writer.write(linebyte)
+                    writer.write(bytes("\n", "utf-8"))
                 
 
 
 class BinaryRunner:
     def __init__(self):
-        BU = BinaryUtility(datain=self.run())
-        #BU.printbinarydata()
-        BU.writeBinaryData()
+        BW = BinaryUtility.Writer(datain=self.run())
+        #BW.printbinarydata()
+        BW.writeBinaryData()
+        BR = BinaryUtility.Reader()
+        BR.readfile()
+        BR.printlines()
+
 
 
     def run(self)->dict:
