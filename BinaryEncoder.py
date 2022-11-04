@@ -23,14 +23,26 @@ class BinaryUtility:
             self.filename = filenamein
             self.lines = []
             self.studentdata = {}
-            pass
+            self.run()
+            
 
         def run(self):
+            """Runs through the base steps of the reader
+            """
+            self.readfile()
             self.studentdata["Name"]=self.translateName()
             self.translateGrades()
 
         
-        def binarytoint(self, binary:list):
+        def binarytoint(self, binary:list)->int:
+            """Converts a list of 8 1s or 0s to binary
+
+            Args:
+                binary (list): a list of length 8 of 0s and 1s(hopefully)
+
+            Returns:
+                int: The integer represented by the given 8 binary bits.
+            """
             count =7
             intout = 0
             for int in range(0,8):
@@ -39,16 +51,28 @@ class BinaryUtility:
             return intout
 
         def readfile(self):
+            """Opens the file and loads each line into self.lines
+            """
             with open(self.filename, "rb") as reader:
                 for line in reader:
                     self.lines.append(line[0:-2])
             
-        def printlines(self):
+        def _printlines(self):
+            """Prints each line in self.lines, used mostly for debugging, not necessary
+            """
             for line in self.lines:
                 print(line)
                 print("\n")
         
         def translateName(self)->str:
+            """Reads the first line of the file, and returns it as a string
+                    Assumes that the first line is the name line, and it is formatted according to my format
+                    creates a string by converting each 8 bit section into number, then that number into an ASCII char
+                    concatinates those chars together to make a string.
+
+            Returns:
+                str: The name represented by the first line of the dat
+            """
             letters = ""
             nameline = list(self.lines[0].decode())
             templist =[]
@@ -63,6 +87,9 @@ class BinaryUtility:
             return letters
         
         def translateGrades(self):
+            """Translates the lines of the file starting at the seccond line into grades.
+                    Each line is one semester, that semester has a list of grades. Assumes each 8 bits is one grade
+            """
             grades = []
             templist= []
             for i in range(1,len(self.lines)):
@@ -179,8 +206,6 @@ class BinaryRunner:
         #BW.printbinarydata()
         BW.writeBinaryData()
         BR = BinaryUtility.Reader()
-        BR.readfile()
-        BR.run()
         print(BR.studentdata)
 
 
