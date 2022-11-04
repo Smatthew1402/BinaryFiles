@@ -4,7 +4,7 @@
 
     Takes in data as a Dict
     Line 1 is the name
-    each subsequent line is a semester, 8 0s denote a new grade
+    each subsequent line is a semester, a space dentoes a new grade
 """
 class BinaryUtility:
 
@@ -24,6 +24,8 @@ class BinaryUtility:
         
 
     def builddata(self):
+        """Filled the binarydata list
+        """
         self.binarydata.append(self.buildname())
         self.loadsemesters()
 
@@ -45,12 +47,11 @@ class BinaryUtility:
 
     def buildsemester(self, semestergrades:list)->str:
         """Builds a semester of data
-            4 1s inbetween each grade
+            " " between each grade that semester
 
         Returns:
-            str: The binary data for one semester
+            str: The binary data for one semester in string form
         """
-        spacer = "1111"
         outstring = ""
         for number in semestergrades:
             outstring += format(number, "08b") +" "
@@ -58,22 +59,33 @@ class BinaryUtility:
 
 
     def printbinarydata(self)->None:
+        """Prints the data in binaryday two ways:
+            Line-By-Line printing each line on its own line
+            And wholesale, printing the default list.__repr__
+        """
         for line in self.binarydata:
             print(line)
         print("\nbinarydata raw\n")
         print(self.binarydata)
         
+
     def loadsemesters(self):
+        """Iterates through data's non-"Name" keys, sending the data associated with them into buildsemester
+        """
         for key in self.data.keys():
             if key !="Name":
                 self.binarydata.append(self.buildsemester(self.data[key]))
 
+
     def writeBinaryData(self):
+        """Writes the data from binarydata to filename
+        """
         with open(self.filename, 'wb') as writer:
             for line in self.binarydata:
                 linebyte = bytes(line, "utf-8")
                 writer.write(linebyte)
                 writer.write(bytes("\n", "utf-8"))
+                
 
 
 class BinaryRunner:
